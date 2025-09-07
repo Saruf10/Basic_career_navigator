@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Navigator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple loading spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Markdown-like styling */
+        .markdown h1, .markdown h2, .markdown h3 { font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .markdown h1 { font-size: 1.5em; }
+        .markdown h2 { font-size: 1.25em; }
+        .markdown ul { list-style-type: disc; margin-left: 2rem; }
+        .markdown p { margin-bottom: 1rem; }
+    </style>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div id="app" class="w-full max-w-lg mx-auto bg-white rounded-xl shadow-lg p-8 transition-all duration-500">
+        <!-- App Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">AI Career Navigator</h1>
+            <p class="text-gray-500">Your personalized guide to the future of work</p>
+        </div>
+
+        <!-- Auth Section (Login/Register) -->
+        <div id="auth-section">
+            <div class="flex border-b mb-6">
+                <button id="login-tab" class="flex-1 py-2 text-center font-semibold text-indigo-600 border-b-2 border-indigo-600">Login</button>
+                <button id="register-tab" class="flex-1 py-2 text-center font-semibold text-gray-500">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="login-username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="login-username" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required minlength="3">
+                </div>
+                <div class="mb-6">
+                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="login-password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required minlength="6">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Login</button>
+            </form>
+
+            <!-- Register Form (hidden by default) -->
+            <form id="register-form" class="hidden">
+                <div class="mb-4">
+                    <label for="register-username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="register-username" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required minlength="3">
+                </div>
+                <div class="mb-6">
+                    <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="register-password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required minlength="6">
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Register</button>
+            </form>
+            <p id="auth-error" class="text-red-500 text-sm mt-4 text-center"></p>
+        </div>
+
+        <!-- Quiz Section (hidden by default) -->
+        <div id="quiz-section" class="hidden">
+            <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Tell Us About Yourself</h2>
+            <form id="quiz-form">
+                <div class="mb-4">
+                    <label for="skills" class="block text-sm font-medium text-gray-700">Your Skills</label>
+                    <textarea id="skills" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Python, public speaking, graphic design" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="interests" class="block text-sm font-medium text-gray-700">Your Interests</label>
+                    <textarea id="interests" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Artificial intelligence, renewable energy, creative writing" required></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="experience" class="block text-sm font-medium text-gray-700">Your Experience Level</label>
+                    <select id="experience" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option>Beginner / Student</option>
+                        <option>Intermediate / Some Experience</option>
+                        <option>Advanced / Professional</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Get My Career Path</button>
+            </form>
+        </div>
+
+        <!-- Dashboard Section (hidden by default) -->
+        <div id="dashboard-section" class="hidden">
+             <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">Your Dashboard</h2>
+                <button id="logout-btn" class="text-sm text-red-500 hover:text-red-700 font-semibold">Logout</button>
+             </div>
+             <div id="dashboard-content" class="bg-gray-50 p-6 rounded-lg markdown">
+                <!-- AI recommendation will be loaded here -->
+             </div>
+             <div id="loading-spinner" class="hidden flex justify-center items-center mt-8">
+                 <div class="loader"></div>
+             </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000';
+
+        // DOM Elements
+        const authSection = document.getElementById('auth-section');
+        const quizSection = document.getElementById('quiz-section');
+        const dashboardSection = document.getElementById('dashboard-section');
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const quizForm = document.getElementById('quiz-form');
+        const authError = document.getElementById('auth-error');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // --- Event Listeners ---
+        loginTab.addEventListener('click', () => showTab('login'));
+        registerTab.addEventListener('click', () => showTab('register'));
+        registerForm.addEventListener('submit', handleRegister);
+        loginForm.addEventListener('submit', handleLogin);
+        quizForm.addEventListener('submit', handleQuizSubmit);
+        logoutBtn.addEventListener('click', handleLogout);
+
+        // --- Core Functions ---
+        
+        // Check initial auth state when the page loads
+        document.addEventListener('DOMContentLoaded', checkAuthState);
+
+        async function checkAuthState() {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                showView('auth');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    if (user.quiz_completed) {
+                        displayDashboard(user.ai_recommendation);
+                    } else {
+                        showView('quiz');
+                    }
+                } else {
+                    handleLogout(); // Invalid token, log out
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                showView('auth');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            authError.textContent = '';
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    alert('Registration successful! Please log in.');
+                    showTab('login');
+                    registerForm.reset();
+                } else {
+                    const errorData = await response.json();
+                    authError.textContent = errorData.detail || 'Registration failed.';
+                }
+            } catch (error) {
+                authError.textContent = 'An error occurred. Please try again.';
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            authError.textContent = '';
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                 const response = await fetch(`${API_URL}/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('accessToken', data.access_token);
+                    await checkAuthState(); // Re-check state to move to quiz/dashboard
+                } else {
+                     const errorData = await response.json();
+                     authError.textContent = errorData.detail || 'Login failed.';
+                }
+            } catch (error) {
+                 authError.textContent = 'An error occurred. Please try again.';
+            }
+        }
+
+        async function handleQuizSubmit(e) {
+            e.preventDefault();
+            loadingSpinner.classList.remove('hidden');
+            dashboardContent.innerHTML = '';
+
+            const token = localStorage.getItem('accessToken');
+            const quizData = {
+                skills: document.getElementById('skills').value,
+                interests: document.getElementById('interests').value,
+                experience: document.getElementById('experience').value,
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/submit-quiz`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(quizData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayDashboard(data.recommendation);
+                } else {
+                    alert('Failed to submit quiz. Please try again.');
+                }
+            } catch (error) {
+                alert('An error occurred while submitting the quiz.');
+            } finally {
+                loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        function displayDashboard(recommendation) {
+            // A simple function to convert markdown-like text to basic HTML
+            let html = recommendation
+                .replace(/### (.*)/g, '<h3 class="text-lg font-semibold mt-4">$1</h3>')
+                .replace(/## (.*)/g, '<h2 class="text-xl font-bold mt-5">$1</h2>')
+                .replace(/\* \*(.*)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+
+            dashboardContent.innerHTML = html;
+            showView('dashboard');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            showView('auth');
+        }
+
+        // --- UI Helper Functions ---
+        function showView(view) {
+            authSection.classList.add('hidden');
+            quizSection.classList.add('hidden');
+            dashboardSection.classList.add('hidden');
+
+            if (view === 'auth') authSection.classList.remove('hidden');
+            if (view === 'quiz') quizSection.classList.remove('hidden');
+            if (view === 'dashboard') dashboardSection.classList.remove('hidden');
+        }
+
+        function showTab(tabName) {
+            authError.textContent = '';
+            if (tabName === 'login') {
+                loginTab.classList.add('text-indigo-600', 'border-indigo-600');
+                registerTab.classList.remove('text-indigo-600', 'border-indigo-600');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                registerTab.classList.add('text-indigo-600', 'border-indigo-600');
+                loginTab.classList.remove('text-indigo-600', 'border-indigo-600');
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+    </script>
+</body>
+</html>
+
